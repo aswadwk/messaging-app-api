@@ -1,0 +1,323 @@
+{
+  "openapi" : "3.0.1",
+  "info" : {
+    "contact" : {
+      "email" : "hajaraswdkom@gmail.com",
+      "name" : "Hajar Aswad"
+    },
+    "description" : "API Documentation.",
+    "title" : "Messaging Task API",
+    "version" : "1.0.0"
+  },
+  "servers" : [ {
+    "url" : "/"
+  } ],
+  "paths" : {
+    "/messages" : {
+      "get" : {
+        "description" : "Get messages for a tenant with pagination",
+        "parameters" : [ {
+          "description" : "Page cursor",
+          "in" : "query",
+          "name" : "cursor",
+          "schema" : {
+            "type" : "integer"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/dto.MessageResponseDto"
+                }
+              }
+            },
+            "description" : "Messages retrieved"
+          },
+          "400" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/fiber.Map"
+                }
+              }
+            },
+            "description" : "Invalid request"
+          },
+          "500" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/fiber.Map"
+                }
+              }
+            },
+            "description" : "Internal server error"
+          }
+        },
+        "tags" : [ "Message" ]
+      },
+      "post" : {
+        "description" : "Publish a message to a tenant",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/dto.NewMessageDto"
+              }
+            }
+          },
+          "description" : "Request body",
+          "required" : true
+        },
+        "responses" : {
+          "202" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/fiber.Map"
+                }
+              }
+            },
+            "description" : "Message published"
+          },
+          "400" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/fiber.Map"
+                }
+              }
+            },
+            "description" : "Invalid request"
+          },
+          "500" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/fiber.Map"
+                }
+              }
+            },
+            "description" : "Internal server error"
+          }
+        },
+        "tags" : [ "Message" ],
+        "x-codegen-request-body-name" : "body"
+      }
+    },
+    "/tenants" : {
+      "post" : {
+        "description" : "Create a new tenant",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/dto.CreateConsumerDto"
+              }
+            }
+          },
+          "description" : "Request body",
+          "required" : true
+        },
+        "responses" : {
+          "201" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/fiber.Map"
+                }
+              }
+            },
+            "description" : "Tenant created"
+          },
+          "400" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/fiber.Map"
+                }
+              }
+            },
+            "description" : "Invalid request"
+          },
+          "500" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/fiber.Map"
+                }
+              }
+            },
+            "description" : "Internal server error"
+          }
+        },
+        "tags" : [ "Tenant" ],
+        "x-codegen-request-body-name" : "body"
+      }
+    },
+    "/tenants/{id}" : {
+      "delete" : {
+        "description" : "Tenant handler",
+        "parameters" : [ {
+          "description" : "Tenant ID",
+          "in" : "path",
+          "name" : "id",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/fiber.Map"
+                }
+              }
+            },
+            "description" : "Tenant stopped"
+          },
+          "400" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/fiber.Map"
+                }
+              }
+            },
+            "description" : "Invalid tenant_id"
+          },
+          "500" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/fiber.Map"
+                }
+              }
+            },
+            "description" : "Internal server error"
+          }
+        },
+        "tags" : [ "Tenant" ]
+      }
+    },
+    "/tenants/{id}/config/concurrency" : {
+      "put" : {
+        "description" : "Tenant handler",
+        "parameters" : [ {
+          "description" : "Tenant ID",
+          "in" : "path",
+          "name" : "tenantId",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/_tenants__id__config_concurrency_put_request"
+              }
+            },
+            "multipart/form-data" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/_tenants__id__config_concurrency_put_request"
+              }
+            },
+            "text/plain" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/_tenants__id__config_concurrency_put_request"
+              }
+            }
+          },
+          "description" : "Request body",
+          "required" : false
+        },
+        "tags" : [ "Tenant" ],
+        "x-codegen-request-body-name" : "body"
+      }
+    }
+  },
+  "components" : {
+    "schemas" : {
+      "dto.CreateConsumerDto" : {
+        "properties" : {
+          "tenant_id" : {
+            "type" : "string"
+          },
+          "workers" : {
+            "type" : "integer"
+          }
+        },
+        "required" : [ "tenant_id", "workers" ],
+        "type" : "object"
+      },
+      "dto.MessageDto" : {
+        "properties" : {
+          "created_at" : {
+            "type" : "string"
+          },
+          "id" : {
+            "type" : "string"
+          },
+          "payload" : {
+            "additionalProperties" : {
+              "type" : "object"
+            },
+            "type" : "object"
+          },
+          "tenant_id" : {
+            "type" : "string"
+          }
+        },
+        "type" : "object"
+      },
+      "dto.MessageResponseDto" : {
+        "properties" : {
+          "data" : {
+            "items" : {
+              "$ref" : "#/components/schemas/dto.MessageDto"
+            },
+            "type" : "array"
+          },
+          "next_cursor" : {
+            "type" : "string"
+          }
+        },
+        "type" : "object"
+      },
+      "dto.NewMessageDto" : {
+        "properties" : {
+          "payload" : {
+            "additionalProperties" : {
+              "type" : "object"
+            },
+            "type" : "object"
+          },
+          "tenant_id" : {
+            "type" : "string"
+          }
+        },
+        "required" : [ "payload", "tenant_id" ],
+        "type" : "object"
+      },
+      "fiber.Map" : {
+        "additionalProperties" : true,
+        "type" : "object"
+      },
+      "_tenants__id__config_concurrency_put_request" : {
+        "properties" : {
+          "workers" : {
+            "type" : "integer"
+          }
+        },
+        "type" : "object"
+      }
+    }
+  },
+  "x-original-swagger-version" : "2.0"
+}

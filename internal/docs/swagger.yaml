@@ -1,0 +1,199 @@
+basePath: /
+definitions:
+  dto.CreateConsumerDto:
+    properties:
+      tenant_id:
+        type: string
+      workers:
+        type: integer
+    required:
+    - tenant_id
+    - workers
+    type: object
+  dto.MessageDto:
+    properties:
+      created_at:
+        type: string
+      id:
+        type: string
+      payload:
+        additionalProperties: {}
+        type: object
+      tenant_id:
+        type: string
+    type: object
+  dto.MessageResponseDto:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/dto.MessageDto'
+        type: array
+      next_cursor:
+        type: string
+    type: object
+  dto.NewMessageDto:
+    properties:
+      payload:
+        additionalProperties: {}
+        type: object
+      tenant_id:
+        type: string
+    required:
+    - payload
+    - tenant_id
+    type: object
+  fiber.Map:
+    additionalProperties: true
+    type: object
+info:
+  contact:
+    email: hajaraswdkom@gmail.com
+    name: Hajar Aswad
+  description: API Documentation.
+  title: Messaging Task API
+  version: 1.0.0
+paths:
+  /messages:
+    get:
+      consumes:
+      - application/json
+      description: Get messages for a tenant with pagination
+      parameters:
+      - description: Page cursor
+        example: 1
+        in: query
+        name: cursor
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Messages retrieved
+          schema:
+            $ref: '#/definitions/dto.MessageResponseDto'
+        "400":
+          description: Invalid request
+          schema:
+            $ref: '#/definitions/fiber.Map'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/fiber.Map'
+      tags:
+      - Message
+    post:
+      consumes:
+      - application/json
+      description: Publish a message to a tenant
+      parameters:
+      - description: Request body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/dto.NewMessageDto'
+      produces:
+      - application/json
+      responses:
+        "202":
+          description: Message published
+          schema:
+            $ref: '#/definitions/fiber.Map'
+        "400":
+          description: Invalid request
+          schema:
+            $ref: '#/definitions/fiber.Map'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/fiber.Map'
+      tags:
+      - Message
+  /tenants:
+    post:
+      consumes:
+      - application/json
+      description: Create a new tenant
+      parameters:
+      - description: Request body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CreateConsumerDto'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Tenant created
+          schema:
+            $ref: '#/definitions/fiber.Map'
+        "400":
+          description: Invalid request
+          schema:
+            $ref: '#/definitions/fiber.Map'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/fiber.Map'
+      tags:
+      - Tenant
+  /tenants/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Tenant handler
+      parameters:
+      - description: Tenant ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Tenant stopped
+          schema:
+            $ref: '#/definitions/fiber.Map'
+        "400":
+          description: Invalid tenant_id
+          schema:
+            $ref: '#/definitions/fiber.Map'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/fiber.Map'
+      tags:
+      - Tenant
+  /tenants/{id}/config/concurrency:
+    put:
+      consumes:
+      - application/json
+      - multipart/form-data
+      - text/plain
+      description: Tenant handler
+      parameters:
+      - description: Tenant ID
+        example: '"tenant-123"'
+        in: path
+        name: tenantId
+        required: true
+        type: string
+      - description: Request body
+        in: body
+        name: body
+        schema:
+          properties:
+            workers:
+              type: integer
+          type: object
+      produces:
+      - application/json
+      responses: {}
+      tags:
+      - Tenant
+schemes:
+- http
+- https
+swagger: "2.0"

@@ -1,0 +1,45 @@
+name: Continuous Deployment Staging
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.21"
+
+      - name: Install dependencies
+        run: go mod tidy
+
+      - name: Build binary
+        run: |
+          CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o bin/api-server ./cmd/server/main.go
+      - name: Push binary to Server
+        uses: appleboy/scp-action@v1
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_KEY }}
+          port: 22
+          source: "./bin/api-server,./db/migrations,./db/vector-migrations,./storage/app,./internal/docs"
+          target: "/home/${{ secrets.SSH_USERNAME }}/apps/server-go"
+
+      - name: SSH to Server
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_KEY }}
+          script: |
+            cd ~/apps/server-go && ./bin/api-server migrate
+            systemctl --user restart ${{ secrets.SERVICE_NAME }}
